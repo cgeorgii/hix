@@ -508,11 +508,11 @@ in {
 
     hostPorts = util.foldMapAttrs (s: mapAttrs (_: effectiveHostPort) s.ports) resolved;
 
-    shell = mkDefault (global.pkgs.stdenv.mkDerivation {
+    shell = mkDefault (global.pkgs.stdenv.mkDerivation (config.env // {
       inherit (config) name;
       inherit buildInputs;
       shellHook = config.code;
-    });
+    }));
 
     vm = {
 
