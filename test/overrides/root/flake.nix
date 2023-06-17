@@ -4,6 +4,7 @@
   inputs.hix.url = path:HIX;
 
   outputs = { hix, ... }: hix.lib.flake ({config, lib, ...}: {
+    systems = ["x86_64-linux" "aarch64-darwin"];
     packages.root = {
       src = ./.;
       library.enable = true;

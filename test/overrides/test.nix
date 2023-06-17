@@ -35,6 +35,8 @@ in {
 
     check 'nix eval .#legacyPackages.${pkgs.system}.ghc.aeson.version' '"2.1.2.1"' 'aeson version wrong after gen-overrides'
 
+    nix flake check
+
     sed -i 's/2\.1/5.8/' flake.nix
     error_target="Please run 'nix run .#gen-overrides' again."
     check_match_err 'nix eval .#legacyPackages.${pkgs.system}.ghc.aeson.version' $error_target 'Wrong error before gen-overrides'
