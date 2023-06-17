@@ -486,7 +486,7 @@ in {
       };
 
       resolvedServices = mkOption {
-        description = mdDoc "Magic modules that allow merging of env-specific service config with their base config.";
+        description = mdDoc "Magic modules that allow merging env-specific service config with their base config.";
         type = attrsOf (submodule resolveServiceModule);
         default = mapAttrs (_: _: {}) config.services;
         readOnly = true;

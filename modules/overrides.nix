@@ -57,6 +57,28 @@ with lib;
       default = true;
     };
 
+    gen-overrides = {
+
+      enable = mkOption {
+        description = mdDoc ''
+        The flake app `.#gen-overrides` collects all cabal2nix-based derivations from the [overrides](#ghc) that would
+        require IFD when computed on the fly.
+
+        Setting this flag instructs Hix to read the generated derivations when building, and to abort the build when
+        they are missing or outdated.
+        '';
+        type = bool;
+        default = false;
+      };
+
+      file = mkOption {
+        description = mdDoc "The relative path of the file in which the overrides are stored.";
+        type = str;
+        default = "ops/overrides.nix";
+      };
+
+    };
+
     internal = let
 
       getOverrides = o: let
@@ -84,4 +106,5 @@ with lib;
     };
 
   };
+
 }

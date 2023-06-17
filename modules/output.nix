@@ -11,6 +11,8 @@ let
 
   libOutput = import ../lib/output.nix { inherit config lib util; };
 
+  genOverrides = import ../lib/gen-overrides.nix { inherit config lib util; };
+
   # TODO use the json method and print in cli
   show-config = util.paramApp {
     name = "show-config";
@@ -130,6 +132,7 @@ in {
         cli = app "${config.internal.hixCli.package}/bin/hix";
         cmd = commandApps config.commands;
         env = util.foldMapAttrs envApps (attrValues util.visibleEnvs);
+        gen-overrides = app "${genOverrides}";
       };
 
     };

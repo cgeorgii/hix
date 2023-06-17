@@ -103,6 +103,9 @@ let
 
   empty = v: if isAttrs v then empty (attrNames v) else v == [];
 
+  foldExtensions =
+  foldr composeExtensions (self: super: {});
+
 in {
   inherit
   packageSubpath
@@ -126,6 +129,7 @@ in {
   toTitle
   minGhc
   empty
+  foldExtensions
   ;
 
   ghcOverlay = import ./ghc-overlay.nix;
