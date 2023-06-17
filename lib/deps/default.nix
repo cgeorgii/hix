@@ -17,15 +17,30 @@ let
   reify = overrides: self: super:
   mapAttrs (reifySpec self super) (normalize overrides self super);
 
-  pregenDecl = drv:
-  (spec.decl "pregen" "Pregen derivation" { inherit drv; } (meta: args: args.self.callPackage meta.drv {})).single;
+  replaceSrc = src: drv:
+  pkgs.haskell.lib.overrideCabal drv (_: { inherit src; });
 
-  # TODO replace `src`
+  # TODO compare metadata and fail on mismatch
+  pregenDecl = pregen: pkg: decl: let
+
+    properSrc = decl.pregen.src decl.meta pkg;
+
+    impl = meta: {self, ...}: replaceSrc properSrc (self.callPackage meta.drv {});
+
+    d = spec.decl "pregen" "Pregen derivation" { drv = pregen.${pkg}; } impl;
+
+  in
+  if hasAttr pkg pregen
+  then d.single
+  else throw ''
+    The package '${pkg}' is declared in the overrides as pregenerated derivation, but the generated file does not
+    contain an entry for it.
+    Please run 'nix run .#gen-overrides'.
+    If that doesn't resolve the issue, the override combinator supplying the derivation might be buggy.
+  '';
+
   replaceDecl = self: super: pregen: pkg: comp: let
-    replaced =
-      if hasAttr pkg pregen
-      then comp // { decl = pregenDecl pregen.${pkg}; }
-      else comp;
+    replaced = comp // optionalAttrs comp.decl.pregen.enable { decl = pregenDecl pregen pkg comp.decl; };
   in spec.reifyComp { inherit pkgs self super pkg; } replaced;
 
   replace = pregen: overrides: self: super: let

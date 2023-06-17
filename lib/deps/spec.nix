@@ -18,7 +18,11 @@ let
   };
 
   defaults = {
-    pregen = null;
+    pregen = {
+      enable = false;
+      src = null;
+      impl = _: _: "no pregen";
+    };
   };
 
   mkOC = conf: {
@@ -95,7 +99,7 @@ let
   findFirst (a: a.type == "decl") null specs;
 
   runPregen = args: options: spec: let
-  in if spec.pregen == null then null else spec.pregen spec.meta (args // { inherit options; });
+  in if spec.pregen.enable then spec.pregen.impl spec.meta (args // { inherit options; }) else null;
 
   reifyPregen = args: specs: let
     norm = listOC specs;
@@ -121,7 +125,7 @@ let
     impl = meta;
   };
 
-  pregen = f: old: old // { single = old.single // {  pregen = f; }; };
+  pregen = src: impl: old: old // { single = old.single // {  pregen = { enable = true; inherit src impl; }; }; };
 
 in {
   inherit transform decl option pregen listOC show compile reifyComp reify reifyPregen;
