@@ -7,18 +7,19 @@ let
   spec = import ./deps/spec.nix { inherit (pkgs) lib; };
   deps = import ./deps/default.nix { inherit (config) pkgs; };
 
-  # TODO run for all envs
-  ghc = config.envs.dev.ghc.vanillaGhc;
-
-  decl = pkg: specs: let
+  decl = ghc: pkg: specs: let
     data = spec.reifyPregen { inherit pkgs pkg; self = ghc; super = ghc; } specs;
   in optionalAttrs (data != null) { ${pkg} = data; };
 
-  decls = concatMapAttrs decl (deps.normalize config.envs.dev.ghc.overrides ghc ghc);
+  decls = env: let
+    ghc = env.ghc.vanillaGhc;
+  in concatMapAttrs (decl ghc) (deps.normalize env.ghc.overrides ghc ghc);
 
   drvAttr = pkg: dump: "  ${pkg} = ${toString dump};";
 
-  file = pkgs.writeText "overrides.nix" (util.unlines (["{"] ++ mapAttrsToList drvAttr decls ++ ["}"]));
+  genEnv = _: env: (util.unlines (["${env.ghc.name} = {"] ++ mapAttrsToList drvAttr (decls env) ++ ["};"]));
+
+  file = pkgs.writeText "overrides.nix" (util.unlines (["{"] ++ mapAttrsToList genEnv config.envs ++ ["}"]));
 
 in config.pkgs.writeScript "gen-overrides" ''
   #!${pkgs.bashInteractive}/bin/bash
