@@ -14,7 +14,6 @@ let
 
   deps = import ./deps/default.nix { pkgs = prev; };
 
-  # TODO error for missing name
   readOverrides = self: super: let
     pregen = import path;
   in

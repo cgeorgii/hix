@@ -28,6 +28,11 @@ let
 
   commandApps = mapAttrs (_: c: app "${c.path}");
 
+  genAll = pkgs.writeScript "hix-gen-all" ''
+  ${config.hpack.script}
+  ${genOverrides}
+  '';
+
 in {
   options = {
 
@@ -133,6 +138,7 @@ in {
         cmd = commandApps config.commands;
         env = util.foldMapAttrs envApps (attrValues util.visibleEnvs);
         gen-overrides = app "${genOverrides}";
+        gen = app "${genAll}";
       };
 
     };
