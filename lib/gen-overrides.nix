@@ -11,12 +11,12 @@ let
   ghc = config.envs.dev.ghc.vanillaGhc;
 
   decl = pkg: specs: let
-    drv = spec.reifyPregen { inherit pkgs pkg; self = ghc; super = ghc; } specs;
-  in optionalAttrs (drv != null) { ${pkg} = drv; };
+    data = spec.reifyPregen { inherit pkgs pkg; self = ghc; super = ghc; } specs;
+  in optionalAttrs (data != null) { ${pkg} = data; };
 
   decls = concatMapAttrs decl (deps.normalize config.envs.dev.ghc.overrides ghc ghc);
 
-  drvAttr = pkg: dump: "${pkg} = ${dump};";
+  drvAttr = pkg: dump: "  ${pkg} = ${toString dump};";
 
   file = pkgs.writeText "overrides.nix" (util.unlines (["{"] ++ mapAttrsToList drvAttr decls ++ ["}"]));
 

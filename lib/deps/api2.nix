@@ -44,6 +44,6 @@ in transformers // {
   inherit self super pkgs reset transform transform_ option noHpack cabalOverrides drv;
   hsLib = hl;
   inherit (pkgs) system lib;
-  compilerName = self.ghc.name;
-  compilerVersion = self.ghc.version;
+  ghcName = self.ghc.name;
+  ghcVersion = self.ghc.version;
 }

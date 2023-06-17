@@ -504,6 +504,8 @@ in {
 
     services.ssh.enable = config.defaults;
 
+    ghc.name = mkDefault config.name;
+
     ghc.overrides = mkDefault (
       util.concatOverrides [config.internal.overridesLocal config.internal.overridesInherited config.overrides]
     );

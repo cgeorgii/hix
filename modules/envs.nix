@@ -49,7 +49,6 @@ in {
 
       dev = {
         ghc = {
-          name = "dev";
           compiler = mkDefault config.compiler;
           overlays = mkDefault [];
           nixpkgs = mkDefault config.inputs.nixpkgs;
@@ -60,14 +59,12 @@ in {
       };
 
       min = {
-        ghc.name = "min";
         internal.overridesInherited =
           util.concatOverrides [(util.overridesGlobalMin ["dev"]) config.envs.dev.overrides];
         localPackage = api: api.minimal;
       };
 
       hls = {
-        ghc.name = "hls";
         hls.enable = true;
         hls.package = mkDefault config.envs.hls.ghc.ghc.haskell-language-server;
         hide = true;

@@ -98,8 +98,20 @@ let
   finalDecl = specs:
   findFirst (a: a.type == "decl") null specs;
 
+  renderPregen = self: ''
+  {
+    meta = ${generators.toPretty { indent = "  "; } self.meta};
+    drv = ${self.drv};
+  }
+  '';
+
   runPregen = args: options: spec: let
-  in if spec.pregen.enable then spec.pregen.impl spec.meta (args // { inherit options; }) else null;
+    data = {
+      __toString = renderPregen;
+      inherit (spec) meta;
+      drv = spec.pregen.impl spec.meta (args // { inherit options; });
+    };
+  in if spec.pregen.enable then data else null;
 
   reifyPregen = args: specs: let
     norm = listOC specs;

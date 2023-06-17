@@ -5,8 +5,7 @@ with lib;
   options = with types; {
     name = mkOption {
       type = str;
-      description = mdDoc "An identifier used for describing the package set.";
-      default = "unnamed";
+      description = mdDoc "A unique identifier of the package set.";
     };
 
     compiler = mkOption {
