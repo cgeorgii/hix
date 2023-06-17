@@ -30,7 +30,7 @@ let
 
   genAll = pkgs.writeScript "hix-gen-all" ''
   ${config.hpack.script}
-  ${genOverrides}
+  ${if config.gen-overrides.enable then genOverrides else ""}
   '';
 
 in {
